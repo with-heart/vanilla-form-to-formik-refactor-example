@@ -68,6 +68,7 @@ export function Form(props: Props) {
         <input
           id="name"
           name="name"
+          value={state.values.name}
           onChange={onChange('name')}
           onBlur={onBlur('name')}
         />
@@ -80,6 +81,7 @@ export function Form(props: Props) {
           id="email"
           name="email"
           type="email"
+          value={state.values.email}
           onChange={onChange('email')}
           onBlur={onBlur('email')}
         />
@@ -92,6 +94,7 @@ export function Form(props: Props) {
           id="password"
           name="password"
           type="password"
+          value={state.values.password}
           onChange={onChange('password')}
           onBlur={onBlur('password')}
         />
