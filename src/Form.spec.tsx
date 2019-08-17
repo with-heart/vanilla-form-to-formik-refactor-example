@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {render, fireEvent} from '@testing-library/react'
-import {Form, reducer, State, Action} from './Form'
+import {Form, reducer, State, Action, Props} from './Form'
 
 describe('reducer', () => {
   const baseState: State = {values: {name: '', email: '', password: ''}}
@@ -23,41 +23,45 @@ describe('reducer', () => {
 })
 
 test('displays the form and handles submit', () => {
-  const onSubmit = jest.fn()
-  const {getByText, getByLabelText} = render(<Form onSubmit={onSubmit} />)
-
-  // assert/find the elements
-  const name = getByLabelText(/name/i)
-  const email = getByLabelText(/email/i)
-  const password = getByLabelText(/password/i)
-  const submit = getByText(/submit/i)
-
-  // fill them out and submit
+  const {elements, onSubmit} = setup()
   const values = {name: 'Mark', email: 'mark@email.com', password: 'Password1'}
-  fireEvent.change(name, {target: {value: values.name}})
-  fireEvent.change(email, {target: {value: values.email}})
-  fireEvent.change(password, {target: {value: values.password}})
-  fireEvent.click(submit)
+
+  // fill out the fields and submit
+  fireEvent.change(elements.name, {target: {value: values.name}})
+  fireEvent.change(elements.email, {target: {value: values.email}})
+  fireEvent.change(elements.password, {target: {value: values.password}})
+  fireEvent.click(elements.submit)
 
   // should have been called with the form values
   expect(onSubmit).toHaveBeenCalledWith(values)
 })
 
 test('displays validation errors', () => {
-  const {getByLabelText, getByText} = render(<Form onSubmit={jest.fn()} />)
+  const {getByText, elements} = setup()
 
-  // assert/find the elements
-  const name = getByLabelText(/name/i)
-  const email = getByLabelText(/email/i)
-  const password = getByLabelText(/password/i)
-
-  // simulate exiting each field
-  fireEvent.blur(name)
-  fireEvent.blur(email)
-  fireEvent.blur(password)
+  // simulate leaving each field
+  fireEvent.blur(elements.name)
+  fireEvent.blur(elements.email)
+  fireEvent.blur(elements.password)
 
   // assert each validation message
   getByText(/name.+required/i)
   getByText(/email.+required/i)
   getByText(/password .+required/i)
 })
+
+function setup(props: Partial<Props> = {}) {
+  const onSubmit = props.onSubmit || jest.fn()
+  const utils = render(<Form {...props} onSubmit={onSubmit} />)
+
+  return {
+    ...utils,
+    onSubmit,
+    elements: {
+      name: utils.getByLabelText(/name/i),
+      email: utils.getByLabelText(/email/i),
+      password: utils.getByLabelText(/password/i),
+      submit: utils.getByText(/submit/i),
+    },
+  }
+}

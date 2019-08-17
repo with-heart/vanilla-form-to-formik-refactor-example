@@ -15,7 +15,7 @@ export type Action =
   | {type: 'updateField'; field: keyof FormValues; value: string}
   | {type: 'setError'; field: keyof FormValues; value: string}
 
-type Props = {
+export type Props = {
   onSubmit: (data: FormValues) => void
 }
 
