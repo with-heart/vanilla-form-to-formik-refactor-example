@@ -36,6 +36,11 @@ test('displays the form and handles submit', () => {
   expect(onSubmit).toHaveBeenCalledWith(values)
 })
 
+test('displays initial field values', () => {
+  const {elements} = setup({initialValues: {name: 'Mark'}})
+  expect(elements.name).toHaveValue('Mark')
+})
+
 test('displays validation errors', () => {
   const {getByText, elements} = setup()
 
