@@ -1,6 +1,15 @@
 import * as React from 'react'
 import {render, fireEvent} from '@testing-library/react'
-import {Form} from './Form'
+import {Form, reducer, State, Action} from './Form'
+
+describe('reducer', () => {
+  const baseState: State = {values: {name: '', email: '', password: ''}}
+
+  test('"updateField" updates a field with a value', () => {
+    const action: Action = {type: 'updateField', field: 'name', value: 'Mark'}
+    expect(reducer(baseState, action)).toMatchObject({values: {name: 'Mark'}})
+  })
+})
 
 test('displays the form and handles submit', () => {
   const onSubmit = jest.fn()
