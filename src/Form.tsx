@@ -1,4 +1,5 @@
 import * as React from 'react'
+import {merge} from 'lodash/fp'
 
 export type FormValues = {
   name: string
@@ -17,16 +18,20 @@ export type Action =
 
 export type Props = {
   onSubmit: (data: FormValues) => void
+  initialValues?: Partial<FormValues>
+}
+
+export const defaultValues = {
+  name: '',
+  email: '',
+  password: '',
 }
 
 export function Form(props: Props) {
   // state
+  const initialValues = merge(defaultValues, props.initialValues)
   const [state, dispatch] = React.useReducer(reducer, {
-    values: {
-      name: '',
-      email: '',
-      password: '',
-    },
+    values: initialValues,
   })
 
   // callbacks
