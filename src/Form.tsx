@@ -8,10 +8,12 @@ export type FormValues = {
 
 export type State = {
   values: FormValues
+  errors?: {[k in keyof FormValues]?: string}
 }
 
 export type Action =
   | {type: 'updateField'; field: keyof FormValues; value: string}
+  | {type: 'setError'; field: keyof FormValues; value: string}
 
 type Props = {
   onSubmit: (data: FormValues) => void
@@ -34,6 +36,16 @@ export function Form(props: Props) {
     dispatch({type: 'updateField', field, value: event.target.value})
   }
 
+  const onBlur = (field: keyof FormValues) => (
+    event: React.FocusEvent<HTMLInputElement>,
+  ) => {
+    const hasValue = !!event.target.value.trim().length
+
+    if (!hasValue) {
+      dispatch({type: 'setError', field, value: `${field} is required`})
+    }
+  }
+
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     props.onSubmit({
@@ -43,11 +55,23 @@ export function Form(props: Props) {
     })
   }
 
+  // render helpers
+  const error = (field: keyof FormValues) =>
+    state.errors ? state.errors[field] : ''
+  const hasError = (field: keyof FormValues) =>
+    !!(state.errors && state.errors[field])
+
   return (
     <form onSubmit={onSubmit}>
       <div>
         <label htmlFor="name">Name</label>
-        <input id="name" name="name" onChange={onChange('name')} />
+        <input
+          id="name"
+          name="name"
+          onChange={onChange('name')}
+          onBlur={onBlur('name')}
+        />
+        {hasError('name') && <div>{error('name')}</div>}
       </div>
 
       <div>
@@ -57,7 +81,9 @@ export function Form(props: Props) {
           name="email"
           type="email"
           onChange={onChange('email')}
+          onBlur={onBlur('email')}
         />
+        {hasError('email') && <div>{error('email')}</div>}
       </div>
 
       <div>
@@ -67,7 +93,9 @@ export function Form(props: Props) {
           name="password"
           type="password"
           onChange={onChange('password')}
+          onBlur={onBlur('password')}
         />
+        {hasError('password') && <div>{error('password')}</div>}
       </div>
 
       <button type="submit">Submit</button>
@@ -82,6 +110,14 @@ export function reducer(state: State, action: Action) {
         ...state,
         values: {
           ...state.values,
+          [action.field]: action.value,
+        },
+      }
+    case 'setError':
+      return {
+        ...state,
+        errors: {
+          ...state.errors,
           [action.field]: action.value,
         },
       }

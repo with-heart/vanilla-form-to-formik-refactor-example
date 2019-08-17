@@ -9,6 +9,17 @@ describe('reducer', () => {
     const action: Action = {type: 'updateField', field: 'name', value: 'Mark'}
     expect(reducer(baseState, action)).toMatchObject({values: {name: 'Mark'}})
   })
+
+  test('"setError" sets an error value for a field', () => {
+    const action: Action = {
+      type: 'setError',
+      field: 'name',
+      value: 'we messed up',
+    }
+    expect(reducer(baseState, action)).toMatchObject({
+      errors: {name: 'we messed up'},
+    })
+  })
 })
 
 test('displays the form and handles submit', () => {
@@ -30,4 +41,23 @@ test('displays the form and handles submit', () => {
 
   // should have been called with the form values
   expect(onSubmit).toHaveBeenCalledWith(values)
+})
+
+test('displays validation errors', () => {
+  const {getByLabelText, getByText} = render(<Form onSubmit={jest.fn()} />)
+
+  // assert/find the elements
+  const name = getByLabelText(/name/i)
+  const email = getByLabelText(/email/i)
+  const password = getByLabelText(/password/i)
+
+  // simulate exiting each field
+  fireEvent.blur(name)
+  fireEvent.blur(email)
+  fireEvent.blur(password)
+
+  // assert each validation message
+  getByText(/name.+required/i)
+  getByText(/email.+required/i)
+  getByText(/password .+required/i)
 })
