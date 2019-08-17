@@ -1,36 +1,53 @@
 import * as React from 'react'
 
-type FormData = {
+export type FormValues = {
   name: string
   email: string
   password: string
 }
 
-type Props = {
-  onSubmit: (data: FormData) => void
+export type State = {
+  values: FormValues
 }
 
-export const Form = (props: Props) => {
+export type Action =
+  | {type: 'updateField'; field: keyof FormValues; value: string}
+
+type Props = {
+  onSubmit: (data: FormValues) => void
+}
+
+export function Form(props: Props) {
   // state
-  const [name, setName] = React.useState('')
-  const [email, setEmail] = React.useState('')
-  const [password, setPassword] = React.useState('')
+  const [state, dispatch] = React.useReducer(reducer, {
+    values: {
+      name: '',
+      email: '',
+      password: '',
+    },
+  })
 
   // callbacks
+  const onChange = (field: keyof FormValues) => (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    dispatch({type: 'updateField', field, value: event.target.value})
+  }
+
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    props.onSubmit({name, email, password})
+    props.onSubmit({
+      name: state.values.name,
+      email: state.values.email,
+      password: state.values.password,
+    })
   }
 
   return (
     <form onSubmit={onSubmit}>
       <div>
         <label htmlFor="name">Name</label>
-        <input
-          id="name"
-          name="name"
-          onChange={event => setName(event.target.value)}
-        />
+        <input id="name" name="name" onChange={onChange('name')} />
       </div>
 
       <div>
@@ -39,7 +56,7 @@ export const Form = (props: Props) => {
           id="email"
           name="email"
           type="email"
-          onChange={event => setEmail(event.target.value)}
+          onChange={onChange('email')}
         />
       </div>
 
@@ -49,11 +66,26 @@ export const Form = (props: Props) => {
           id="password"
           name="password"
           type="password"
-          onChange={event => setPassword(event.target.value)}
+          onChange={onChange('password')}
         />
       </div>
 
       <button type="submit">Submit</button>
     </form>
   )
+}
+
+export function reducer(state: State, action: Action) {
+  switch (action.type) {
+    case 'updateField':
+      return {
+        ...state,
+        values: {
+          ...state.values,
+          [action.field]: action.value,
+        },
+      }
+    default:
+      return state
+  }
 }
