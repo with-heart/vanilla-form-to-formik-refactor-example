@@ -74,6 +74,9 @@ export function Form(props: FormProps) {
   const errorFor = (field: keyof FormValues) =>
     get(`errors.${field}`, state) || ''
 
+  // get the field's value
+  const valueFor = (field: keyof FormValues) => get(`values.${field}`, state)
+
   return (
     <form onSubmit={onSubmit}>
       <div>
@@ -81,7 +84,7 @@ export function Form(props: FormProps) {
         <input
           id="name"
           name="name"
-          value={state.values.name}
+          value={valueFor('name')}
           onChange={onChange('name')}
           onBlur={onBlur('name')}
         />
@@ -94,7 +97,7 @@ export function Form(props: FormProps) {
           id="email"
           name="email"
           type="email"
-          value={state.values.email}
+          value={valueFor('email')}
           onChange={onChange('email')}
           onBlur={onBlur('email')}
         />
@@ -107,7 +110,7 @@ export function Form(props: FormProps) {
           id="password"
           name="password"
           type="password"
-          value={state.values.password}
+          value={valueFor('password')}
           onChange={onChange('password')}
           onBlur={onBlur('password')}
         />
