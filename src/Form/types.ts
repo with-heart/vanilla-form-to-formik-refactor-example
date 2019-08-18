@@ -47,4 +47,10 @@ export type FormProps = {
 
   /** Optional object of `values` the form should start with. */
   initialValues?: Partial<FormValues>
+
+  /**
+   * Optional validation function that takes form `values` and returns an object
+   * with an error string for any fields that fail validation.
+   */
+  validate?: (values: FormValues) => Partial<FormValues>
 }
