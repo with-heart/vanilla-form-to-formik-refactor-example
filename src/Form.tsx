@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {merge} from 'lodash/fp'
+import {merge, get, has} from 'lodash/fp'
 
 /** Represents the shape of the `values` object of `Form`. */
 export type FormValues = {
@@ -115,12 +115,10 @@ export function Form(props: Props) {
   }
 
   // determine if the field has an error
-  const hasError = (field: keyof FormValues) =>
-    !!(state.errors && state.errors[field])
+  const hasError = (field: keyof FormValues) => has(`errors.${field}`, state)
 
   // get the field's error (or an empty string if it has no error)
-  const error = (field: keyof FormValues) =>
-    state.errors ? state.errors[field] : ''
+  const error = (field: keyof FormValues) => get(`errors.${field}`, state) || ''
 
   return (
     <form onSubmit={onSubmit}>
