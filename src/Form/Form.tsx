@@ -41,18 +41,20 @@ export function Form(props: FormProps) {
   }
 
   /**
-   * A curried `onBlur` event handler that dispatches the `setFieldError` event for
-   * the corresponding field if it is empty. This event notifies `reducer` that
-   * this field has a "required field" error.
+   * A curried `onBlur` event handler that validates the given field using the
+   * optional `validate` prop. If `validate` returns an error for this field,
+   * signal to `reducer` that the field's `error` should be set.
    */
   const onBlur = (field: keyof FormValues) => (
-    event: React.FocusEvent<HTMLInputElement>,
+    _event: React.FocusEvent<HTMLInputElement>,
   ) => {
-    // does the field have a value after trimming whitespace?
-    const hasValue = !!event.target.value.trim().length
+    if (props.validate) {
+      const errors = props.validate(state.values)
+      const error = errors[field]
 
-    if (!hasValue) {
-      dispatch({type: 'setFieldError', field, error: `${field} is required`})
+      if (error) {
+        dispatch({type: 'setFieldError', field, error: error})
+      }
     }
   }
 

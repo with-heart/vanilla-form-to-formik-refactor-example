@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {render, fireEvent} from '@testing-library/react'
+import {isEmpty, size} from 'lodash/fp'
 import {Form, FormProps} from '.'
 
 test('displays the form and handles submit', () => {
@@ -22,17 +23,34 @@ test('displays initial field values', () => {
 })
 
 test('displays validation errors', () => {
-  const {getByText, elements} = setup()
+  const {getByText, elements} = setup({
+    validate: values => {
+      const errors: Partial<typeof values> = {}
 
-  // simulate leaving each field
+      if (isEmpty(values.name)) {
+        errors.name = 'Name is a required field'
+      }
+
+      if (isEmpty(values.email)) {
+        errors.email = 'Email is a required field'
+      }
+
+      if (size(values.password) < 8) {
+        errors.password = 'Password must be at least 8 characters'
+      }
+
+      return errors
+    },
+  })
+
+  // simulate blur for validation and asserts each field's message
   fireEvent.blur(elements.name)
-  fireEvent.blur(elements.email)
-  fireEvent.blur(elements.password)
-
-  // assert each validation message
   getByText(/name.+required/i)
+  fireEvent.blur(elements.email)
   getByText(/email.+required/i)
-  getByText(/password .+required/i)
+  fireEvent.change(elements.password, {target: {value: 'pw1'}})
+  fireEvent.blur(elements.password)
+  getByText(/password.*at least 8/i)
 })
 
 function setup(props: Partial<FormProps> = {}) {
