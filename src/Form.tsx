@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {merge, get, has} from 'lodash/fp'
+import {merge, get, has, set} from 'lodash/fp'
 
 /** Represents the shape of the `values` object of `Form`. */
 export type FormValues = {
@@ -169,23 +169,13 @@ export function Form(props: Props) {
 export function reducer(state: State, action: Action) {
   switch (action.type) {
     case 'updateField':
-      // update the `value` of `field`
-      return {
-        ...state,
-        values: {
-          ...state.values,
-          [action.field]: action.value,
-        },
-      }
+      // set the `value` of `field`
+      return set(`values.${action.field}`, action.value, state)
+
     case 'setError':
       // set the error `value` of `field`
-      return {
-        ...state,
-        errors: {
-          ...state.errors,
-          [action.field]: action.error,
-        },
-      }
+      return set(`errors.${action.field}`, action.error, state)
+
     default:
       // since we didn't match any action types, return unmodified state
       return state
