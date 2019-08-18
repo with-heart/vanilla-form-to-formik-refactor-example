@@ -14,15 +14,17 @@ export const defaultValues = {
 }
 
 /**
+ * Deeply merges an optional `FormValues` object with `defaultValues`.
+ */
+export const withDefaults = merge(defaultValues)
+
+/**
  * Renders a form which can initialize its fields with values. Displays an "X
  * is required" error for any empty fields on blur.
  */
 export function Form(props: FormProps) {
-  // `defaultValues` overridden by any `initialValues` passed in to the
-  // component
-  const initialValues = merge(defaultValues, props.initialValues)
-
   // initialize `reducer` with our initial values
+  const initialValues = withDefaults(props.initialValues)
   const [state, dispatch] = React.useReducer(reducer, {
     values: initialValues,
   })
