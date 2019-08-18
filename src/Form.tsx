@@ -21,13 +21,13 @@ export type State = {
  * An `Action` represents an event that the `reducer` reacts to in order to
  * determine changes to make to the current `State`.
  */
-export type Action = UpdateFieldValue | SetFieldError
+export type Action = SetFieldValue | SetFieldError
 
 /**
  * Signals that the specified `field` was updated to the provided `value`.
  */
-export type UpdateFieldValue = {
-  type: 'updateField'
+export type SetFieldValue = {
+  type: 'setFieldValue'
   field: keyof FormValues
   value: string
 }
@@ -36,7 +36,7 @@ export type UpdateFieldValue = {
  * Signals that the specified `field` has an `error`.
  */
 export type SetFieldError = {
-  type: 'setError'
+  type: 'setFieldError'
   field: keyof FormValues
   error: string
 }
@@ -77,18 +77,18 @@ export function Form(props: Props) {
   })
 
   /**
-   * A curried `onChange` event handler that dispatches the `updateField` event
+   * A curried `onChange` event handler that dispatches the `setFieldValue` event
    * for the corresponding field and its value. This event signals to `reducer`
    * that the field's value in our `State` object should be updated.
    */
   const onChange = (field: keyof FormValues) => (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    dispatch({type: 'updateField', field, value: event.target.value})
+    dispatch({type: 'setFieldValue', field, value: event.target.value})
   }
 
   /**
-   * A curried `onBlur` event handler that dispatches the `setError` event for
+   * A curried `onBlur` event handler that dispatches the `setFieldError` event for
    * the corresponding field if it is empty. This event notifies `reducer` that
    * this field has a "required field" error.
    */
@@ -99,7 +99,7 @@ export function Form(props: Props) {
     const hasValue = !!event.target.value.trim().length
 
     if (!hasValue) {
-      dispatch({type: 'setError', field, error: `${field} is required`})
+      dispatch({type: 'setFieldError', field, error: `${field} is required`})
     }
   }
 
@@ -168,11 +168,11 @@ export function Form(props: Props) {
 /** Modifies the current `State` based on the `type` of an `Action`. */
 export function reducer(state: State, action: Action) {
   switch (action.type) {
-    case 'updateField':
+    case 'setFieldValue':
       // set the `value` of `field`
       return set(`values.${action.field}`, action.value, state)
 
-    case 'setError':
+    case 'setFieldError':
       // set the error `value` of `field`
       return set(`errors.${action.field}`, action.error, state)
 

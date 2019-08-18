@@ -5,14 +5,14 @@ import {Form, reducer, State, Action, Props} from './Form'
 describe('reducer', () => {
   const baseState: State = {values: {name: '', email: '', password: ''}}
 
-  test('"updateField" updates a field with a value', () => {
-    const action: Action = {type: 'updateField', field: 'name', value: 'Mark'}
+  test('"setFieldValue" sets the value of a field', () => {
+    const action: Action = {type: 'setFieldValue', field: 'name', value: 'Mark'}
     expect(reducer(baseState, action)).toMatchObject({values: {name: 'Mark'}})
   })
 
-  test('"setError" sets an error value for a field', () => {
+  test('"setFieldError" sets the error value of a field', () => {
     const action: Action = {
-      type: 'setError',
+      type: 'setFieldError',
       field: 'name',
       error: 'we messed up',
     }
