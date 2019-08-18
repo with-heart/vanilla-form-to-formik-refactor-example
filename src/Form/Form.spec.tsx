@@ -1,26 +1,6 @@
 import * as React from 'react'
 import {render, fireEvent} from '@testing-library/react'
-import {Form, reducer, State, Action, Props} from './Form'
-
-describe('reducer', () => {
-  const baseState: State = {values: {name: '', email: '', password: ''}}
-
-  test('"setFieldValue" sets the value of a field', () => {
-    const action: Action = {type: 'setFieldValue', field: 'name', value: 'Mark'}
-    expect(reducer(baseState, action)).toMatchObject({values: {name: 'Mark'}})
-  })
-
-  test('"setFieldError" sets the error value of a field', () => {
-    const action: Action = {
-      type: 'setFieldError',
-      field: 'name',
-      error: 'we messed up',
-    }
-    expect(reducer(baseState, action)).toMatchObject({
-      errors: {name: 'we messed up'},
-    })
-  })
-})
+import {Form, FormProps} from '.'
 
 test('displays the form and handles submit', () => {
   const {elements, onSubmit} = setup()
@@ -55,7 +35,7 @@ test('displays validation errors', () => {
   getByText(/password .+required/i)
 })
 
-function setup(props: Partial<Props> = {}) {
+function setup(props: Partial<FormProps> = {}) {
   const onSubmit = props.onSubmit || jest.fn()
   const utils = render(<Form {...props} onSubmit={onSubmit} />)
 
