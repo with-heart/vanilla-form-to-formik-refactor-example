@@ -42,10 +42,11 @@ export function Form(props: FormProps) {
 
   /**
    * A curried `onBlur` event handler that validates the given field using the
-   * optional `validate` prop. If `validate` returns an error for this field,
-   * signal to `reducer` that the field's `error` should be set.
+   * optional `validate` or `validationSchema` prop. If an error is found,
+   * signal to `reducer` that the field's `error` should be set to the
+   * specified message.
    */
-  const onBlur = (field: keyof FormValues) => (
+  const onBlur = (field: keyof FormValues) => async (
     _event: React.FocusEvent<HTMLInputElement>,
   ) => {
     if (props.validate) {
@@ -53,7 +54,17 @@ export function Form(props: FormProps) {
       const error = errors[field]
 
       if (error) {
-        dispatch({type: 'setFieldError', field, error: error})
+        return dispatch({type: 'setFieldError', field, error})
+      }
+    }
+
+    if (props.validationSchema) {
+      try {
+        await props.validationSchema.validateAt(field, state.values)
+      } catch (error) {
+        if (error.name === 'ValidationError') {
+          return dispatch({type: 'setFieldError', field, error: error.message})
+        }
       }
     }
   }

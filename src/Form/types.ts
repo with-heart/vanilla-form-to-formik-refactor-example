@@ -1,3 +1,5 @@
+import * as Yup from 'yup'
+
 /** Represents the shape of the `values` object of `Form`. */
 export type FormValues = {
   name: string
@@ -53,4 +55,10 @@ export type FormProps = {
    * with an error string for any fields that fail validation.
    */
   validate?: (values: FormValues) => Partial<FormValues>
+
+  /**
+   * Optional Yup validation schema. Error strings for any fields that fail
+   * validation are parsed from the result of the schema's validation.
+   */
+  validationSchema?: Yup.Schema<FormValues>
 }
