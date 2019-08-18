@@ -71,7 +71,8 @@ export function Form(props: FormProps) {
   const hasError = (field: keyof FormValues) => has(`errors.${field}`, state)
 
   // get the field's error (or an empty string if it has no error)
-  const error = (field: keyof FormValues) => get(`errors.${field}`, state) || ''
+  const errorFor = (field: keyof FormValues) =>
+    get(`errors.${field}`, state) || ''
 
   return (
     <form onSubmit={onSubmit}>
@@ -84,7 +85,7 @@ export function Form(props: FormProps) {
           onChange={onChange('name')}
           onBlur={onBlur('name')}
         />
-        {hasError('name') && <div>{error('name')}</div>}
+        {hasError('name') && <div>{errorFor('name')}</div>}
       </div>
 
       <div>
@@ -97,7 +98,7 @@ export function Form(props: FormProps) {
           onChange={onChange('email')}
           onBlur={onBlur('email')}
         />
-        {hasError('email') && <div>{error('email')}</div>}
+        {hasError('email') && <div>{errorFor('email')}</div>}
       </div>
 
       <div>
@@ -110,7 +111,7 @@ export function Form(props: FormProps) {
           onChange={onChange('password')}
           onBlur={onBlur('password')}
         />
-        {hasError('password') && <div>{error('password')}</div>}
+        {hasError('password') && <div>{errorFor('password')}</div>}
       </div>
 
       <button type="submit">Submit</button>
