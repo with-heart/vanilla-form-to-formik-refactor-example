@@ -14,7 +14,7 @@ describe('reducer', () => {
     const action: Action = {
       type: 'setError',
       field: 'name',
-      value: 'we messed up',
+      error: 'we messed up',
     }
     expect(reducer(baseState, action)).toMatchObject({
       errors: {name: 'we messed up'},

@@ -38,7 +38,7 @@ export type UpdateFieldValue = {
 export type SetFieldError = {
   type: 'setError'
   field: keyof FormValues
-  value: string
+  error: string
 }
 
 /** The shape of the `props` that can be passed to `Form`. */
@@ -99,7 +99,7 @@ export function Form(props: Props) {
     const hasValue = !!event.target.value.trim().length
 
     if (!hasValue) {
-      dispatch({type: 'setError', field, value: `${field} is required`})
+      dispatch({type: 'setError', field, error: `${field} is required`})
     }
   }
 
@@ -185,7 +185,7 @@ export function reducer(state: State, action: Action) {
         ...state,
         errors: {
           ...state.errors,
-          [action.field]: action.value,
+          [action.field]: action.error,
         },
       }
     default:
