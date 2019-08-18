@@ -1,56 +1,7 @@
 import * as React from 'react'
-import {merge, get, has, set} from 'lodash/fp'
-
-/** Represents the shape of the `values` object of `Form`. */
-export type FormValues = {
-  name: string
-  email: string
-  password: string
-}
-
-/** Represents the shape of the state of our component. */
-export type State = {
-  /** Object which contains the current `value` of each field. */
-  values: FormValues
-
-  /** Object which contains any current field errors. */
-  errors?: {[k in keyof FormValues]?: string}
-}
-
-/**
- * An `Action` represents an event that the `reducer` reacts to in order to
- * determine changes to make to the current `State`.
- */
-export type Action = SetFieldValue | SetFieldError
-
-/**
- * Signals that the specified `field` was updated to the provided `value`.
- */
-export type SetFieldValue = {
-  type: 'setFieldValue'
-  field: keyof FormValues
-  value: string
-}
-
-/**
- * Signals that the specified `field` has an `error`.
- */
-export type SetFieldError = {
-  type: 'setFieldError'
-  field: keyof FormValues
-  error: string
-}
-
-/** The shape of the `props` that can be passed to `Form`. */
-export type Props = {
-  /**
-   * Callback which receives the `values` when the "Submit" button is clicked.
-   */
-  onSubmit: (data: FormValues) => void
-
-  /** Optional object of `values` the form should start with. */
-  initialValues?: Partial<FormValues>
-}
+import {merge, get, has} from 'lodash/fp'
+import {FormProps, FormValues} from './types'
+import {reducer} from './reducer'
 
 /**
  * The default `values` object that the form uses unless overridden by
@@ -66,7 +17,7 @@ export const defaultValues = {
  * Renders a form which can initialize its fields with values. Displays an "X
  * is required" error for any empty fields on blur.
  */
-export function Form(props: Props) {
+export function Form(props: FormProps) {
   // `defaultValues` overridden by any `initialValues` passed in to the
   // component
   const initialValues = merge(defaultValues, props.initialValues)
@@ -163,21 +114,4 @@ export function Form(props: Props) {
       <button type="submit">Submit</button>
     </form>
   )
-}
-
-/** Modifies the current `State` based on the `type` of an `Action`. */
-export function reducer(state: State, action: Action) {
-  switch (action.type) {
-    case 'setFieldValue':
-      // set the `value` of `field`
-      return set(`values.${action.field}`, action.value, state)
-
-    case 'setFieldError':
-      // set the error `value` of `field`
-      return set(`errors.${action.field}`, action.error, state)
-
-    default:
-      // since we didn't match any action types, return unmodified state
-      return state
-  }
 }
