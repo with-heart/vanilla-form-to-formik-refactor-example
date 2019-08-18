@@ -111,11 +111,7 @@ export function Form(props: Props) {
     event.preventDefault()
 
     // pass submitted `values` to the user-provided `onSubmit` handler
-    props.onSubmit({
-      name: state.values.name,
-      email: state.values.email,
-      password: state.values.password,
-    })
+    props.onSubmit(state.values)
   }
 
   // determine if the field has an error
